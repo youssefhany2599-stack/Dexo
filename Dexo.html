@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dexo - مساعدك في الـ DMC</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1a1d23;--mu:#5d6675;--bd:#dde1e8;--ac:#0b5fff;--me:#0b5fff;--bot:#fff;--wr:#b45309;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151a;--card:#1b1f27;--tx:#eceff4;--mu:#9aa4b5;--bd:#2c3340;--ac:#6ea0ff;--me:#2a4a99;--bot:#1b1f27;--wr:#f0b35a}}
+:root[data-theme="dark"]{--bg:#12151a;--card:#1b1f27;--tx:#eceff4;--mu:#9aa4b5;--bd:#2c3340;--ac:#6ea0ff;--me:#2a4a99;--bot:#1b1f27;--wr:#f0b35a}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;font-size:16px;line-height:1.7;display:flex;flex-direction:column}
+header{padding:10px 14px;border-bottom:1px solid var(--bd);background:var(--card);display:flex;align-items:center;gap:8px}
+header b{flex:1}
+header button{border:1px solid var(--bd);background:none;border-radius:8px;padding:4px 10px;cursor:pointer;color:var(--mu);font:inherit;font-size:14px}
+#log{flex:1;overflow-y:auto;padding:12px 14px;max-width:760px;width:100%;margin:auto}
+.m{max-width:88%;padding:9px 13px;border-radius:14px;margin:8px 0;white-space:pre-wrap;word-wrap:break-word}
+.u{background:var(--me);color:#fff;margin-inline-start:auto;border-end-start-radius:4px}
+.b{background:var(--bot);border:1px solid var(--bd);margin-inline-end:auto;border-end-end-radius:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chips button{border:1px solid var(--bd);background:var(--card);color:var(--ac);border-radius:99px;padding:6px 12px;cursor:pointer;font:inherit;font-size:14px}
+form{display:flex;gap:8px;padding:10px 14px;border-top:1px solid var(--bd);background:var(--card);max-width:none}
+form textarea{flex:1;resize:none;border:1px solid var(--bd);border-radius:12px;padding:9px 12px;background:var(--bg);color:inherit;font:inherit;max-height:120px}
+form button{border:0;background:var(--ac);color:#fff;border-radius:12px;padding:0 18px;font:inherit;cursor:pointer}
+form button:disabled{opacity:.5}
+small{color:var(--mu);display:block;text-align:center;padding:2px 10px 6px;font-size:12px}
+.w{color:var(--wr)}
+
+.m ol{margin:6px 0 0;padding-inline-start:22px}.m li{margin:2px 0}
+.wr{margin-top:8px;padding:6px 10px;border-radius:8px;background:color-mix(in srgb,var(--wr) 14%,transparent);color:var(--wr);font-size:14px}
+.fn{margin-top:6px;color:var(--mu);font-size:13px}
+.rp{margin:8px 0 0;padding:8px 10px;border-radius:8px;border:1px dashed var(--bd);background:var(--bg);font:13px/1.6 inherit;white-space:pre-wrap}
+.cp{margin-top:6px;border:1px solid var(--bd);background:none;color:var(--ac);border-radius:8px;padding:3px 10px;font:inherit;font-size:13px;cursor:pointer}
+#cx{padding:4px 14px;font-size:13px;color:var(--mu);background:var(--card);border-bottom:1px solid var(--bd)}#cx button{border:0;background:none;color:var(--ac);cursor:pointer;font:inherit}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.chips{margin-bottom:0}
+.r{display:flex;align-items:flex-start;gap:8px;margin:8px 0;max-width:94%}.r .m{margin:0;max-width:calc(100% - 46px)}.av{width:38px;height:38px;border-radius:50%;flex:none;border:1px solid var(--bd);background:#fff}
+</style>
+</head>
+<body>
+<header><b>Dexo <span style="font-weight:400;color:var(--mu);font-size:14px">مساعدك في الـ DMC</span></b><button id="rs" type="button">محادثة جديدة</button></header>
+<div id="cx" hidden><span></span><button type="button">مسح ✕</button></div>
+<div id="log" aria-live="polite"></div>
+<form id="f"><textarea id="t" rows="1" aria-label="سؤالك" placeholder="اكتب سؤالك… (مثال: الـ OTP مش بيوصل في CIB)"></textarea><button id="s">إرسال</button></form>
+<small>الإجابات من الدليل التشغيلي فقط. الدعم: 0221299999 · واتساب 01092166337</small>
+<script>
+const P=[
+{n:"Vodafone Red: استبدال نقاط",k:"فودافون ريد red نقاط خصم ussd 112 pin",ty:"نقاط",ph:"نعم",id:"لا",v:"Pin Code",
+s:["اطلب *112# واضغط اتصال","اختار 1","أدخل موبايل العميل المشترك في Vodafone Red","هتوصلك رسالة بالرقم، اتأكد واضغط 1","أدخل المبلغ (لو أكبر من الرصيد تظهر رسالة بالرصيد الفعلي)","العميل تيجيله رسالة فيها Pin Code ويدخله لإتمام العملية","هتوصلك رسالة برقم العملية والمبلغ المخصوم"]},
+{n:"Vodafone Red: إضافة نقاط على مشتريات",k:"فودافون ريد red اضافة نقاط مشتريات ussd",ty:"نقاط",ph:"نعم",id:"لا",v:"رسالة تأكيد للتاجر",
+s:["اطلب *112# واضغط اتصال","اختار 2","أدخل موبايل العميل","رسالة تأكيد برقم العميل، اتأكد واضغط 1","أدخل المبلغ المدفوع (كاش أو فيزا)","رسالة تأكيد برقم العملية والمبلغ المضاف"]},
+{n:"Vodafone Red: إلغاء عملية",k:"فودافون ريد red الغاء استرجاع ussd",ty:"إلغاء",ph:"نعم",id:"لا",v:"رقم العملية + المبلغ",
+s:["اطلب *112# واضغط اتصال","اختار 3","أدخل موبايل العميل","أدخل رقم العملية (خصم أو إضافة)","أدخل مبلغ العملية بدقة","رسالة برقم العملية والمبلغ الملغي"],
+w:"مفيش استرجاع جزئي: الغي العملية كلها واعمل واحدة جديدة بالمبلغ الصح. الاسترداد بيتبع طريقة الدفع (فيزا = مفيش استرداد كاش). استرجاع المنتج حسب سياسة التاجر."},
+{n:"البنك الأهلي NBE: خصم نقاط (نظام جديد)",k:"nbe الاهلي dmc نقاط جديد 14 رقم قومي otp",ty:"نقاط",ph:"الموظف لا يدخله",id:"14 رقم كامل",v:"OTP (6 أرقام)",
+s:["افتح dmc.revamp.dsquares.com/login في المتصفح","اسم مستخدم وكلمة مرور الفرع ثم تسجيل الدخول","من القائمة الجانبية اضغط النقاط","اختار البنك الأهلي المصري، أدخل الـ14 رقم قومي والمبلغ، ثم إدخال","OTP (6 أرقام) يوصل لموبايل العميل، أدخله ثم تأكيد","اضغط خصم","تظهر: تم خصم النقاط بنجاح من البنك الأهلي، ثم تم"],
+w:"لازم موافقة العميل الصريحة وتأكيد بياناته قبل الخصم."},
+{n:"البنك الأهلي NBE: حرق قسائم (نظام قديم)",k:"nbe الاهلي dmc قسائم قديم 6 ارقام قومي",ty:"قسيمة",ph:"لا",id:"آخر 6 أرقام من الرقم القومي",v:"لا يوجد",
+s:["من الصفحة الرئيسية اضغط تبويب قسائم","أدخل آخر 6 أرقام من الرقم القومي","أدخل رقم القسيمة","اضغط إرسال","تظهر: تم حرق الكوبون بنجاح، ثم تم"]},
+{n:"CIB: حرق كوبونات (تحقق ثلاثي)",k:"cib التجاري الدولي كوبون otp ثلاثي",ty:"كوبون",ph:"نعم (مسجل)",id:"آخر 6 أرقام من الرقم القومي",v:"OTP",
+s:["أدخل رقم تليفون العميل المسجل في البنك ثم التالي","أدخل آخر 6 أرقام من الرقم القومي ثم التالي","أدخل رقم الكوبون ثم التالي","اضغط إدخال، OTP يوصل للعميل SMS","اكتب الـ OTP في كود التحقق ثم إرسال","شاشة خضراء: تم حرق الكوبون بنجاح"]},
+{n:"QNB الأهلي: حرق كوبونات",k:"qnb قطر الوطني كوبون otp",ty:"كوبون",ph:"نعم (مسجل)",id:"لا",v:"OTP (6 أرقام)",
+s:["أدخل رقم تليفون العميل المسجل ثم إدخال","أدخل رقم الكوبون ثم إدخال","OTP يتبعت لموبايل العميل وتظهر شاشة الإشعار","اكتب الـ OTP (6 أرقام) ثم إرسال","تم حرق الكوبون بنجاح"]},
+{n:"بنك مصر: حرق كوبونات",k:"بنك مصر banque misr bm كوبون otp",ty:"كوبون",ph:"نعم (مسجل)",id:"لا",v:"OTP",
+s:["أدخل رقم تليفون العميل المسجل ثم إدخال","أدخل رقم الكوبون ثم إدخال","اضغط إدخال، OTP يوصل SMS للعميل","اكتب الـ OTP ثم إرسال","شاشة تأكيد خضراء"]},
+{n:"FAB MISR: حرق نقاط",k:"fab ابوظبي الاول نقاط otp",ty:"نقاط",ph:"نعم (مسجل)",id:"لا",v:"OTP",
+s:["أدخل رقم تليفون العميل المسجل (01XXXXXXXX) ثم التالي","أدخل مبلغ النقاط المطلوب (مثال 1000) ثم إدخال","OTP يوصل للعميل، أدخله في كود التحقق ثم إرسال","تم حرق النقاط بنجاح فورًا"]},
+{n:"FAB MISR: حرق كوبونات",k:"fab ابوظبي الاول كوبون otp",ty:"كوبون",ph:"نعم (مسجل)",id:"لا",v:"OTP",
+s:["أدخل رقم تليفون العميل المسجل ثم التالي","أدخل رقم الكوبون ثم إدخال","OTP يتبعت للعميل وتظهر شاشة الإشعار","أدخل الـ OTP ثم إرسال","رسالة تأكيد حرق الكوبون"]},
+{n:"WE: حرق كوبونات",k:"we المصرية للاتصالات كوبون otp",ty:"كوبون",ph:"نعم (مسجل)",id:"لا",v:"OTP",
+s:["أدخل رقم تليفون العميل المسجل ثم التالي","أدخل رقم الكوبون ثم إدخال","OTP يتبعت تلقائيًا لهاتف العميل","أدخل الـ OTP ثم إرسال","تم حرق الكوبون بنجاح"]},
+{n:"ExxonMobil: حرق كوبونات",k:"exxon اكسون موبيل كوبون otp",ty:"كوبون",ph:"نعم (هاتف فقط)",id:"لا",v:"OTP",
+s:["أدخل رقم تليفون العميل فقط ثم التالي","أدخل رقم الكوبون ثم التالي","اضغط إدخال لطلب OTP","اكتب الكود ثم إرسال","تم حرق الكوبون بنجاح"]},
+{n:"بنك المشرق Mashreq",k:"mashreq المشرق كوبون مباشر",ty:"كوبون",ph:"لا",id:"لا",v:"لا يوجد",s:["أدخل رقم الكوبون واضغط إرسال","الكوبون يتحرق فورًا وتظهر شاشة نجاح خضراء"]},
+{n:"Sky Logistics (مالك وسائق)",k:"sky سكاي لوجستيكس كوبون مباشر",ty:"كوبون",ph:"لا",id:"لا",v:"لا يوجد",s:["أدخل رقم الكوبون ثم إرسال","تم حرق الكوبون بنجاح (نفس الإجراء للمالك والسائق)"]},
+{n:"JOTUN جوتن",k:"jotun جوتن دهانات كوبون مباشر",ty:"كوبون",ph:"لا",id:"لا",v:"لا يوجد",s:["أدخل رقم الكوبون في الخانة","اضغط إرسال، تظهر: تم حرق الكوبون بنجاح"]},
+{n:"HSBC",k:"hsbc كوبون مباشر",ty:"كوبون",ph:"لا",id:"لا",v:"لا يوجد",s:["أدخل رقم الكوبون ثم إرسال","شاشة النجاح تظهر مباشرة"]},
+{n:"NBK بنك الكويت الوطني",k:"nbk الكويت كوبون مباشر",ty:"كوبون",ph:"لا",id:"لا",v:"لا يوجد",s:["أدخل رقم الكوبون ثم إرسال","شاشة التأكيد الخضراء"]}
+];
+const S=[
+{n:"الكوبون/الفاوتشر مش بيتحرق",k:"فاوتشر كوبون مش بيتحرق مش راضي يشتغل",a:["تاريخ الكوبون انتهى","رقم التليفون غير الرقم اللي الكوبون اتبعت عليه","مشكلة من البنك أو شركة الاتصالات: العميل يرجع لدعم البنك أو دعم Dsquares","مشكلة إنترنت في الفرع"],q:"الكوبون تابع لأي بنك أو برنامج؟ افتح خطواته من تبويب البرامج."},
+{n:"الـ OTP أو Pin مش بيوصل للعميل",k:"otp pin كود تحقق مبيوصلش",a:["اتأكد من الرقم المدخل ومن شبكة العميل","استنى 60 ثانية قبل ما تطلب الكود تاني","الرقم المسجل في البنك ممكن يكون بتاع حد غير العميل","لو لسه: العميل يتواصل مع البنك أو شركة الاتصالات (المشكلة عند العميل مش الفرع)"]},
+{n:"DMC مش شغال",k:"dmc دخول لوجين login مش بيفتح",a:["لو مشكلة إنترنت اعمل ريستارت","اخرج من اليوزر وادخل تاني","اتأكد من بيانات دخول الفرع ومن الرابط dmc.revamp.dsquares.com/login","لو الخطأ استمر: تصعيد"]},
+{n:"Vodafone Red النقاط مش بتتحرق",k:"فودافون ريد red مش بيشتغل شبكة",a:["اطلب *112# تاني","لو مشكلة شبكة: اخرج بره الفرع أو شغّل وضع الطيران وارجع قفّله"]},
+{n:"الإنترنت مش شغال في التليفون",k:"انترنت باقة شريحة مش شغال",a:["بص على الشبكة","عدّل الساعة والتاريخ في التليفون","كلّم الدعم 0221299999 أو واتساب 01092166337 وابعت الرقم المكتوب على الشريحة، ولو الباقة خلصت هيجددوها"]},
+{n:"رصيد غير كافٍ (Vodafone Red)",k:"رصيد غير كافي insufficient balance",a:["الرسالة بتظهر رصيد العميل الفعلي","عدّل المبلغ للحد الأقصى المتاح"]},
+{n:"رسالة خطأ عام / فشل الاتصال بالخادم",k:"server error خطأ خادم فشل",a:["Level 2: متحاولش تصلحها من الفرع","كلّم الدعم 0221299999 أو ابعت تفاصيل المعاملة على واتساب 01092166337"],e:1},
+{n:"العملية نجحت ومفيش تأكيد / اتكرر إدخال الكوبون / التطبيق وقف",k:"مفيش تأكيد تجميد freeze مرتين",a:["غير موثق في الدليل","متكررش العملية قبل ما تتأكد من الدعم","صعّد بالتقرير"],e:1}
+];
+
+
+const SUP="الدعم: 0221299999 · واتساب 01092166337",DONE=["اتحلت، شكرًا","لسه المشكلة موجودة"];
+const PCH=["NBE","CIB","QNB","بنك مصر","FAB","WE","ExxonMobil"];
+const st={prog:null,intent:null,aw:null};
+const FAIL=/(^| )(مش|مب|ما|لا|msh|mesh|mish|mosh|not|dont|doesn|cant|wont|no)|فشل|مشكل|problem|issue|راضي|عطل|بوظ/;
+const RMENU=["Red استبدال نقاط","Red إضافة نقاط على مشتريات","Red إلغاء عملية","Red جزء من عملية","Red استرجاع المنتج","Red نقاط على كاش أو فيزا"];
+const DMENU=["DMC تسجيل الدخول","DMC النقاط Redeem","DMC القسائم Burn","DMC البحث والـ Export","DMC صفحة الإدارة","DMC الدعم"];
+function dmc(x){const M=t=>B({t:"DMC: "+t});
+ if(FAIL.test(x))return B({t:S[2].n+" — جرّب بالترتيب:",steps:S[2].a,f:"الرابط: https://dmc.revamp.dsquares.com/login"});
+ if(/ادار|management|dashboard|مدير|المتجر|العلامه التجاريه/.test(x))return B({t:"DMC: صفحة الإدارة (Management Viewer)",steps:["تقدر تشوف كل المعاملات الخاصة بعلامتك التجارية","من أيقونة المتجر على الشمال اختار نوع المشروع: نقاط أو قسائم","اختار المشروع اللي عايز تعرف معاملاته","أول حاجة الـ Dashboard: ملخص أرقام البرنامج (استبدالات، استرجاع، مكافآت، إلغاء) وبيتغير حسب الفترة الزمنية اللي بتفلتر عليها","تحتها المعاملات بالتفصيل (الوقت والتاريخ، اسم الفرع، رقم المعاملة)","تقدر تنزل كل المعاملات من Export في إكسيل"]});
+ if(/دعم|support|تواصل|مواعيد/.test(x))return B({t:"DMC: الدعم",steps:["تليفون: 02-21299999","واتساب: 01092166337","المواعيد: 7 أيام في الأسبوع، من 10 الصبح لـ 12 بالليل","ولو دوست على علامة التليفون (موجودة في كل الصفحات) هيظهرلك رقم الدعم"]});
+ if(/فلتر|filter|export|اكسيل|excel|بحث|معاملات/.test(x))return B({t:"DMC: البحث والـ Export",steps:["أول ما تختار البرنامج هتظهرلك صفحة فيها كل معاملاته اللي اتعملت في الفرع","دوس على Filter عشان تدور على معاملة محددة (رقم تليفون العميل أو تاريخ المعاملة)","تقدر تنزل كل المعاملات من Export في إكسيل","ودوس Redeem (نقاط) أو Burn (قسائم) عشان تبدأ معاملة"]});
+ if(/نقاط|points|redeem|استبدال/.test(x))return B({t:"DMC: استبدال نقاط",steps:["من الصفحة الرئيسية اختار Points، وهتظهرلك البرامج اللي فرعك شغال بيها (الدخول بيتم تلقائي)","اختار البرنامج اللي العميل عايز يستخدمه","دوس Redeem","اكتب رقم هاتف العميل في أول خانة، وبعدها المبلغ اللي عايز يستبدله، وبعدين Get Verification Code","العميل هيجيله رسالة برمز التحقق، اكتبه في Verification Code ودوس Submit"],f:"متكتبش الـ OTP في الشات، بيتكتب في شاشة النظام بس."});
+ if(/قسيم|قسائم|كوبون|voucher|burn/.test(x))return B({t:"DMC: حرق قسيمة",steps:["من الصفحة الرئيسية اختار Vouchers، وهتظهرلك البرامج اللي فرعك شغال بيها (الدخول بيتم تلقائي)","اختار البرنامج المطلوب بناءً على طلب العميل","دوس Burn","اكتب رقم هاتف العميل في أول خانة، وبعدها رقم القسيمة، وبعدين Get Verification Code","العميل هيجيله رسالة برمز التحقق، اكتبه ودوس Submit"],f:"خطوات بعض البنوك بتختلف (مثلًا CIB بتطلب آخر 6 أرقام قومي). اكتب اسم البنك وهوريك خطواته."});
+ if(/دخول|login|تسجيل/.test(x))return B({t:"DMC: تسجيل الدخول",steps:["افتح رابط DMC: https://dmc.revamp.dsquares.com/login","اكتب اسم المستخدم وكلمة المرور بتاعة الفرع","دوس Login (تسجيل الدخول)","اختار نوع المعاملة: Points (نقاط) أو Vouchers (قسائم)"],f:"ممكن تغيّر اللغة من زر العربية/English أعلى الصفحة."});
+ return B({t:"DMC هو نظام الفرع لاستبدال النقاط وحرق القسائم (وصفحة إدارة للمعاملات). عايز تعرف إيه؟",chips:DMENU})}
+function norm(s){return s.toLowerCase().replace(/[\u064B-\u065F\u0640]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/[٠-٩]/g,d=>"٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[^\p{L}\p{N}\s*#]/gu," ").replace(/(.)\1{2,}/g,"$1$1").replace(/\s+/g," ").trim()}
+const CW="فاوتشر كوبون فودافون انترنت voucher coupon vodafone internet mashreq exxon استبدال الغاء استرجاع".split(" ");
+function lev(a,b){const m=[];for(let i=0;i<=a.length;i++)m[i]=[i];for(let j=1;j<=b.length;j++)m[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]==b[j-1]?0:1));return m[a.length][b.length]}
+function fix(x){return x.split(" ").map(w=>{if(w.length<5)return w;for(const c of CW)if(Math.abs(c.length-w.length)<=1&&lev(w,c)<=(c.length>7?2:1))return c;return w}).join(" ")}
+const PR=[[/qnb|كيو ان بي|قطر/,6],[/\bfab\b|فاب|ابوظبي|ابو ظبي/,"fab"],[/\bcib\b|سي اي بي|التجاري الدولي/,5],[/hsbc/,15],[/nbk|الكويت/,16],[/mashreq|mashriq|مشرق/,12],[/\bwe\b|المصريه للاتصالات|(^| )وي( |$)/,10],[/exx?on|اكسون|اكسن/,11],[/\bsky\b|سكاي/,13],[/jotun|جوتن/,14],[/\bnbe\b|الاهلي|national bank of egypt/,"nbe"],[/بنك مصر|bn?k ma?sr|banque|bank misr|\bbm\b/,7]];
+function prog(x){for(const[r,v]of PR)if(r.test(x)){
+ if(v==="fab")return /نقاط|point|pts/.test(x)?8:/كوبون|coupon|فاوتشر/.test(x)?9:"fab";
+ if(v==="nbe")return /نقاط|جديد|14|new|point|pts/.test(x)?3:/قسيم|قسائم|قسايم|قديم|old|كوبون|coupon|فاوتشر/.test(x)?4:"nbe";
+ return v}return null}
+const B=o=>Object.assign({chips:DONE},o);
+function pb(i){const p=P[i];return B({t:p.n+"\nهاتف العميل: "+p.ph+" · رقم قومي: "+p.id+" · تحقق: "+p.v,steps:p.s,w:p.w})}
+function amb(f){return f==="nbe"?B({t:"البنك الأهلي عنده نظامين. أنهي واحد؟",chips:["NBE نقاط (14 رقم قومي)","NBE قسائم (6 أرقام)"]}):B({t:"FAB MISR: نقاط ولا كوبونات؟",chips:["FAB نقاط","FAB كوبونات"]})}
+function rep(issue,tried){const n=new Date().toLocaleString("ar-EG");return "تقرير تصعيد - Dsquares\nUser Name: ____\nالفرع: ____\nالبرنامج: "+(typeof st.prog=="number"?P[st.prog].n:"____")+"\nالمشكلة: "+issue+"\nنوع العملية/رقم العملية: ____\nالوقت: "+n+"\nنص رسالة الخطأ: ____\nاللي اتجرب: "+tried}
+function esc(issue,tried,t){return B({t:t||"المشكلة دي محتاجة الدعم الفني. "+SUP,rep:rep(issue,tried),chips:null})}
+function ask(t){return B({t,chips:PCH})}
+function voucher(){const k=typeof st.prog=="number";const r=[B({t:"الكوبون مش بيتحرق؟ افحص الأول:",steps:S[0].a,chips:null})];
+ if(k)r.push(pb(st.prog));else if(typeof st.prog=="string")r.push(amb(st.prog));else r.push(ask("الكوبون تابع لأي بنك أو برنامج؟ اختار من تحت:"));return r}
+function otp(){const r=[B({t:"الـ OTP أو الـ Pin مش بيوصل؟ جرّب بالترتيب:",steps:S[1].a,chips:typeof st.prog=="number"?DONE:PCH})];
+ const i=st.prog;if(typeof i=="number"){const p=P[i];r.push(B({t:p.v=="لا يوجد"?p.n+": مفيهوش OTP في الدليل، الكوبون بيتحرق مباشرة برقم الكوبون بس.":p.n+": هاتف العميل: "+p.ph+" · التحقق: "+p.v+"."}))}else if(typeof i=="string")r.push(amb(i));return r}
+function red(x){
+ if(/رصيد|غير كاف|insufficient|balance/.test(x))return B({t:S[5].n,steps:S[5].a});
+ if(/جزء|جزئي|partial|بعض ال|نصف/.test(x)){st.aw="vc";return B({t:"مفيش استرجاع جزئي في Vodafone Red. الحل: إلغاء العملية كلها وعمل عملية جديدة بالمبلغ الصح.\nالاسترداد بيتبع طريقة الدفع (فيزا = مفيش استرداد كاش)، واسترجاع المنتج حسب سياسة التاجر.\nقبل أي إلغاء اتأكد من: رقم العملية، المبلغ بالظبط، موبايل العميل، وطريقة الدفع. اتأكدت؟",chips:["أيوه اتأكدت، وريني الإلغاء","لأ، هراجع الأول"]})}
+ if(/منتج|product/.test(x))return B({t:"استرجاع المنتج ممكن حسب سياسة الاستبدال والاسترجاع عند التاجر.\nالاسترداد بيتبع طريقة الدفع: لو العميل دفع بالفيزا مفيش استرداد كاش. ولو العملية نفسها محتاجة إلغاء اختار «Red إلغاء عملية».",chips:RMENU});
+ if(/الغ|cancel|void|رجع|استرجاع|استرداد|refund/.test(x)){st.aw=null;return B({t:P[2].n,steps:P[2].s,w:P[2].w})}
+ if(/اضاف|مشتريات|add|earn|purchase|زود|كاش|فيزا|visa|cash|نقد/.test(x))return B({t:P[1].n+"\nالعميل يقدر يضيف نقاط على المبلغ النقدي المدفوع فقط (كاش أو فيزا).",steps:P[1].s});
+ if(/استبدال|خصم|redeem|بدل|استبدل/.test(x))return B({t:P[0].n,steps:P[0].s});
+ if(FAIL.test(x))return B({t:"فودافون ريد: "+S[3].a[0]+". لو لسه، جرّب:",steps:S[3].a.slice(1),chips:RMENU});
+ return B({t:"عايز تعمل إيه في فودافون ريد؟",chips:RMENU})}
+function reply(q,flag){
+ const x=fix(norm(q));let pr=prog(x);let out;
+ if(pr===null&&typeof st.prog=='string')pr=st.prog=='nbe'?(/نقاط|جديد|14|point/.test(x)?3:/قسيم|قسائم|قسايم|قديم|\b6\b/.test(x)?4:null):(/نقاط|point/.test(x)?8:/كوبون|coupon/.test(x)?9:null);
+ if(pr!==null)st.prog=pr;
+ if(st.aw==="vc"){if(/^(لا|no|لسه)/.test(x)){st.aw=null;return[B({t:"راجع رقم العملية والمبلغ وطريقة الدفع من رسالة العملية أو سجل الفرع، وابعتلي لما تجهز.",chips:null})]}
+  if(/ايوه|اه|اتاكدت|جاهز|تمام|yes|اكيد|وريني/.test(x)){st.aw=null;return[B({t:P[2].n,steps:P[2].s,w:P[2].w})]}}
+ const R=/(^| )(red|ريد)( |$)|فودافون|vodafone|112/.test(x)||st.intent==="red"&&/الغ|جزء|جزئي|اضاف|استبدال|رصيد|refund|cancel|partial/.test(x);
+ if(/مفيش تاكيد|مرتين|اتكرر|تكرار|twice|duplicate|freeze|فريز|تجمد|هنج|التطبيق وقف|وقف التطبيق|(نجحت|اتحرق|تم) .{0,12}(ومفيش|بس مفيش)/.test(x)){st.intent="err";out=[B({t:S[7].n+"\nده "+S[7].a[0]+". "+S[7].a[1]+"، و"+S[7].a[2]+".",rep:rep(S[7].n,"لم يتم تكرار العملية"),chips:null})]}
+ else if(/dmc|دي ام سي|ديم سي|لوجين|login|dsquares\.com/.test(x)){st.intent="dmc";out=[dmc(x)]}
+ else if(/otp|او تي بي|اوتيبي|كود تحقق|رمز|(^| )pin|بن كود|كود.{0,12}(وصل|يوصل|بيوصل|اتبعت|بيتبعت)/.test(x)){st.intent="otp";out=otp()}
+ else if(R){st.intent="red";out=[red(x)]}
+ else if(/ف[اوي]{1,3}تشر|كوبون|قسيم|قسائم|voucher|coupon|حرق|تحرق|burn|7[a-z]{0,3}2/.test(x)){st.intent="voucher";
+  out=FAIL.test(x)?voucher():(typeof st.prog=="number"?[pb(st.prog)]:typeof st.prog=="string"?[amb(st.prog)]:[ask("اختار البنك أو البرنامج وهوريك خطوات الحرق:")])}
+ else if(/انترنت|internet|(^| )net( |$)|باقه|شريحه/.test(x)){st.intent="net";out=[B({t:S[4].n+" — جرّب بالترتيب:",steps:S[4].a})]}
+ else if(/server|خادم|سيرفر|api|قاعده بيانات|database|كود خطا|error|رساله خطا|فشل|failed|crash|انهار/.test(x)){st.intent="err";out=[B({t:S[6].n+"\n"+S[6].a[0]+". "+S[6].a[1],rep:rep(S[6].n,"لم يتم أي إجراء من الفرع"),chips:null})]}
+ else if(pr!==null)out=typeof pr!="number"?[amb(pr)]:st.intent==="otp"?otp():st.intent==="voucher"?voucher():[pb(pr)];
+ else if(/لسه|لسا|موجوده|ما اتحلتش|still/.test(x))out=[esc(st.intent||"غير محددة","الخطوات اللي اتعرضت في الشات","متأسف لعدم حل المشكلة لأنها خارج اختصاصي. برجاء إرسال الـ User Name والمشكلة بالتفصيل مع إرسال صورة للـ Error إن أمكن إلى الرقم 01092166337 وسيتم حلها في أسرع وقت.")];
+ else if(/شكر|تسلم|اتحلت|thanks|thx|متشكر|تمام/.test(x)){st.aw=null;out=[B({t:"تمام 👍 لو ظهرت مشكلة تانية اسألني.",chips:null})]}
+ else if(/دعم|support|واتساب|whatsapp|تصعيد|اكلم|رقم/.test(x))out=[esc(st.intent||"غير محددة","—",SUP+"\nالمواعيد: 7 أيام في الأسبوع، من 10 الصبح لـ 12 بالليل.")];
+ else out=[B({t:"ده مش موثق في الدليل التشغيلي، ومش هخترعلك إجراء. اكتب اسم البرنامج والمشكلة (مثال: OTP في CIB)، أو صعّد للدعم: "+SUP,rep:rep("غير موثقة: "+q.slice(0,80),"—"),chips:["الفاوتشر مش بيتحرق","الـ OTP مش بيوصل","DMC مش بيفتح","فودافون ريد مش شغال"]})];
+ if(flag)out.unshift(B({t:"⚠️ شكلك كتبت رقم قومي أو OTP في الشات. متبعتهمش هنا؛ اكتبهم في شاشة النظام بس. مسحت الرقم من الرسالة.",chips:null}));
+ return out}
+if(typeof document!=="undefined"){
+const log=document.getElementById("log"),t=document.getElementById("t"),cx=document.getElementById("cx");
+function ctx(){const i=st.prog;cx.hidden=typeof i!="number";if(!cx.hidden)cx.firstChild.textContent="البرنامج الحالي: "+P[i].n+" "}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt)e.textContent=txt;return e}
+const AV="data:image/webp;base64,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";
+function add(c,txt){const d=el("div","m "+c,txt);if(c=="b"){const r=el("div","r"),i=el("img","av");i.src=AV;i.alt="Dexo";r.appendChild(i);r.appendChild(d);log.appendChild(r)}else log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+function show(b){const d=add("b",b.t);
+ if(b.steps){const o=el("ol");b.steps.forEach(s=>o.appendChild(el("li","",s)));d.appendChild(o)}
+ if(b.w)d.appendChild(el("div","wr","⚠️ "+b.w));
+ if(b.f)d.appendChild(el("div","fn",b.f));
+ if(b.rep){d.appendChild(el("pre","rp",b.rep));const c=el("button","cp","نسخ التقرير");c.type="button";c.onclick=()=>{const done=()=>c.textContent="تم النسخ ✓";try{navigator.clipboard.writeText(b.rep).then(done,()=>{})}catch(e){const a=el("textarea");a.value=b.rep;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();done()}};d.appendChild(c)}
+ if(b.chips){const c=el("div","chips");b.chips.forEach(q=>{const k=el("button","",q);k.type="button";k.onclick=()=>send(q);c.appendChild(k)});d.appendChild(c)}
+ log.scrollTop=log.scrollHeight}
+function send(q){q=(q||t.value).trim();if(!q)return;t.value="";
+ const flag=/\d{14}/.test(q)||/(otp|كود|pin).{0,10}\d{4,6}/i.test(q),m=q.replace(/\d{14}/g,"••••").replace(/((?:otp|كود|pin)\D{0,10})\d{4,6}/gi,"$1••••");
+ add("u",m);reply(m,flag).forEach(show);ctx();t.focus()}
+function intro(){log.innerHTML="";st.prog=st.intent=st.aw=null;ctx();
+ show({t:"أهلاً بيك، أنا Dexo 👋 مساعدك في الـ DMC، موجود لو محتاج أي مساعدة.",chips:["الفاوتشر مش راضي يتحرق","إزاي أحرق كوبون CIB؟","الـ OTP مش بيوصل","فودافون ريد مش شغال","DMC مش بيفتح","عميل عايز يرجّع جزء من عملية Red"]})}
+document.getElementById("f").onsubmit=e=>{e.preventDefault();send()};
+t.onkeydown=e=>{if(e.key=="Enter"&&!e.shiftKey){e.preventDefault();send()}};
+document.getElementById("rs").onclick=intro;
+cx.lastChild.onclick=()=>{st.prog=null;ctx()};
+intro()}else module.exports={reply,st};
+</script>
+</body>
+</html>
